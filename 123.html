@@ -1,0 +1,2341 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4F5F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MO-34">
+<title>MO-34 — журнал группы</title>
+
+<link rel="apple-touch-icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23F4F5F1'/%3E%3Crect x='30' y='40' width='120' height='110' fill='none' stroke='%2317202E' stroke-width='3'/%3E%3Cline x1='30' y1='70' x2='150' y2='70' stroke='%2317202E' stroke-width='3'/%3E%3Cline x1='75' y1='70' x2='75' y2='150' stroke='%2317202E' stroke-width='2'/%3E%3Ctext x='90' y='58' font-family='Georgia, serif' font-size='22' text-anchor='middle' fill='%2317202E' font-weight='bold'%3EMO-34%3C/text%3E%3Ctext x='52' y='98' font-family='Georgia, serif' font-size='22' text-anchor='middle' fill='%2317202E'%3E1%3C/text%3E%3Ctext x='104' y='98' font-family='Georgia, serif' font-size='22' text-anchor='middle' fill='%2317202E'%3E2%3C/text%3E%3Ctext x='52' y='130' font-family='Georgia, serif' font-size='22' text-anchor='middle' fill='%2317202E'%3E3%3C/text%3E%3Ctext x='104' y='130' font-family='Georgia, serif' font-size='22' text-anchor='middle' fill='%2317202E'%3E4%3C/text%3E%3C/svg%3E">
+
+<link rel="manifest" href='data:application/manifest+json,{"name":"MO-34 журнал группы","short_name":"MO-34","start_url":"./","display":"standalone","orientation":"portrait","background_color":"%23E7E9E4","theme_color":"%23F4F5F1","icons":[{"src":"data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 180 180%27%3E%3Crect width=%27180%27 height=%27180%27 fill=%27%23F4F5F1%27/%3E%3Ctext x=%2790%27 y=%2790%27 font-size=%27120%27 text-anchor=%27middle%27 dominant-baseline=%27central%27 fill=%27%2317202E%27 font-family=%27Georgia%27 font-weight=%27bold%27%3EM%3C/text%3E%3C/svg%3E","sizes":"180x180","type":"image/svg+xml","purpose":"any"}]}'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+:root{
+  --paper:#E7E9E4; --sheet:#F4F5F1; --ink:#17202E; --ink-2:#5C6675;
+  --rule:#C6CBC2; --rule-soft:#DBDFD7; --red:#B4342A; --blue:#2A4E8F;
+  --amber:#A56A1E; --green:#3D7A52;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--paper);color:var(--ink);
+  font:400 16px/1.5 'Golos Text',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+button,input,select,textarea{font-family:inherit}
+
+.topbar{
+  display:flex;align-items:center;gap:14px;
+  height:54px;padding:0 16px;padding-top:var(--sat);
+  background:var(--sheet);border-bottom:1px solid var(--ink);
+  position:sticky;top:0;z-index:30;
+}
+.brand{display:flex;align-items:baseline;gap:8px;flex:none}
+.brand b{font:700 18px/1 'Old Standard TT',serif;letter-spacing:.01em}
+.brand span{font-size:12px;color:var(--ink-2)}
+.tabs{display:flex;gap:2px}
+.tab{
+  appearance:none;border:0;background:none;cursor:pointer;
+  font:500 14px/1 inherit;color:var(--ink-2);
+  padding:9px 12px;border-bottom:2px solid transparent;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.spacer{flex:1}
+.btn{
+  appearance:none;cursor:pointer;border:1px solid var(--ink);
+  background:none;color:var(--ink);border-radius:2px;
+  font:500 13px/1 inherit;padding:9px 14px;min-height:38px;
+}
+.btn:hover{background:var(--ink);color:var(--sheet)}
+.btn-solid{background:var(--ink);color:var(--sheet)}
+.btn-solid:hover{background:#0C131E}
+.btn-sm{padding:7px 11px;font-size:12px;min-height:34px}
+
+.save-dot{
+  font-size:11px;color:var(--ink-2);opacity:0;transition:opacity .3s;
+  min-width:52px;text-align:right;
+}
+.save-dot.show{opacity:1}
+
+.export-wrap{position:relative;display:inline-block}
+.export-menu{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:var(--sheet);border:1px solid var(--ink);
+  border-radius:2px;min-width:200px;z-index:60;
+  box-shadow:0 12px 32px rgba(23,32,46,.18);
+  padding:4px;
+}
+.export-menu[hidden]{display:none}
+.export-menu button{
+  display:block;width:100%;text-align:left;
+  appearance:none;background:none;border:0;
+  padding:9px 12px;font:500 13px inherit;color:var(--ink);
+  cursor:pointer;border-radius:2px;
+}
+.export-menu button:hover{background:var(--paper)}
+.export-menu hr{border:0;border-top:1px solid var(--rule-soft);margin:4px 6px}
+
+.shell{display:grid;grid-template-columns:308px minmax(0,1fr);align-items:start}
+.side{
+  background:var(--sheet);border-right:1px solid var(--rule);
+  min-height:calc(100vh - 54px);padding:18px 0 32px;
+  position:sticky;top:54px;
+  max-height:calc(100vh - 54px);overflow-y:auto;
+}
+.side h2{font:400 12.5px/1 inherit;color:var(--ink-2);margin:0 18px 10px}
+.search{
+  display:block;width:calc(100% - 36px);margin:0 18px 12px;
+  padding:10px 12px;border:1px solid var(--rule);border-radius:2px;
+  background:var(--paper);color:var(--ink);font-size:16px;min-height:40px;
+}
+.search::placeholder{color:#9AA199}
+.roster{list-style:none;margin:0;padding:0}
+.roster li{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;border-bottom:1px solid var(--rule-soft);
+}
+.roster .nm{flex:1;font-size:13.5px;line-height:1.3}
+.ticks{display:flex;gap:3px;flex:none}
+.ticks i{width:8px;height:8px;border:1px solid var(--ink-2);display:block}
+.ticks i.on{background:var(--ink-2)}
+.extra{font:600 10px inherit;color:var(--ink-2);font-style:normal}
+.debt-wrap{display:flex;align-items:center;gap:4px;flex:none}
+.debt{
+  font:500 10px/1 inherit;color:var(--red);
+  border:1px solid var(--red);border-radius:2px;padding:3px 5px;
+  white-space:nowrap;
+}
+.debt-clear{
+  appearance:none;background:none;border:0;cursor:pointer;
+  color:var(--red);font:500 12px/1 inherit;padding:2px 4px;
+  border-radius:2px;
+}
+.debt-clear:hover{background:var(--red);color:#fff}
+
+.num-badge{
+  display:inline-block;min-width:22px;margin-right:8px;
+  font:500 11px/1 inherit;color:var(--ink-2);
+  text-align:right;font-variant-numeric:tabular-nums;
+}
+.roster .num-badge{margin-right:4px;min-width:20px}
+
+.main{padding:20px 26px 130px;max-width:1200px;width:100%}
+.pane[hidden]{display:none}
+
+.month-nav{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.month-nav h1{font:400 30px/1 'Old Standard TT',serif;margin:0;flex:1;min-width:0}
+.mn{
+  appearance:none;cursor:pointer;background:none;
+  border:1px solid var(--rule);border-radius:2px;
+  width:40px;height:40px;padding:0;color:var(--ink-2);
+  font:400 18px/1 inherit;flex:none;
+}
+.mn:hover{border-color:var(--ink);color:var(--ink)}
+
+.legend{font-size:12px;color:var(--ink-2);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.legend b{font-weight:400;color:var(--ink)}
+.legend code{
+  font:600 12px/1 'Golos Text',monospace;
+  background:var(--sheet);border:1px solid var(--rule-soft);
+  border-radius:2px;padding:2px 6px;color:var(--ink);
+}
+.legend code.c-n{color:var(--red)}
+.legend code.c-u{color:var(--blue)}
+.legend code.c-b{color:var(--blue);background:#E4E9F2;border-color:#C9D3E2}
+.legend code.c-z{color:var(--amber)}
+
+.cal{
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  border-top:1px solid var(--rule);border-left:1px solid var(--rule);
+}
+.cal.reassign{animation:pulse .55s ease}
+@keyframes pulse{0%{background:#D8DDD4}100%{background:transparent}}
+.dow{
+  padding:7px 6px;font-size:11.5px;color:var(--ink-2);
+  background:var(--sheet);
+  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  text-align:center;
+}
+.cell{
+  min-height:98px;padding:6px 7px 8px;background:var(--sheet);
+  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  position:relative;cursor:pointer;overflow:hidden;
+}
+.cell:hover{background:#EFF1EC}
+.cell.weekend,.cell.weekend:hover{
+  background:var(--paper);
+  background-image:repeating-linear-gradient(-45deg,transparent 0 5px,var(--rule-soft) 5px 6px);
+  cursor:default;
+}
+.cell.empty{background:var(--paper);background-image:none;cursor:default}
+.cell.empty:hover{background:var(--paper)}
+.cell.holiday,.cell.holiday:hover{
+  background:#F2E9E7;
+  background-image:repeating-linear-gradient(-45deg,transparent 0 5px,#E0C8C4 5px 6px);
+  cursor:default;
+}
+.cell .num{display:block;font:600 12px inherit;color:var(--ink-2);margin-bottom:5px}
+.cell.weekend .num{color:#9AA199}
+.cell.holiday .num{color:var(--red)}
+.cell.today{background:#FBFBF8}
+.cell.today::before{content:'';position:absolute;inset:0 0 auto 0;height:2px;background:var(--red)}
+.cell.today .num{color:var(--red)}
+.cell.sel{box-shadow:inset 0 0 0 2px var(--ink)}
+.cell .holiday-name{
+  font:500 10px/1.2 inherit;color:var(--red);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.loc{font-size:10px;color:var(--ink-2);margin-bottom:4px;letter-spacing:.02em}
+.loc.mas{color:var(--ink)}
+.who{display:block;font-size:12px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who.skipped{color:var(--red);text-decoration:line-through}
+
+.day-panel{margin-top:20px;border:1px solid var(--ink);border-radius:2px;background:var(--sheet)}
+.day-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:14px 18px;border-bottom:1px solid var(--rule);flex-wrap:wrap;
+}
+.day-head h2{font:400 21px/1.15 'Old Standard TT',serif;margin:0}
+.loc-select{
+  appearance:none;background:transparent;border:0;
+  border-bottom:1px dashed var(--rule);
+  font:400 12px inherit;color:var(--ink-2);padding:4px 18px 4px 2px;
+  cursor:pointer;min-height:32px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),
+                   linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);
+  background-position:calc(100% - 8px) 50%, calc(100% - 4px) 50%;
+  background-size:4px 4px, 4px 4px;background-repeat:no-repeat;
+}
+.loc-select:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+.duty-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:14px 18px;border-bottom:1px solid var(--rule-soft);
+}
+.duty-row:last-of-type{border-bottom:0}
+.slot-tag{font:500 11px inherit;color:var(--ink-2);flex:none;width:72px}
+.duty-sel{
+  appearance:none;background:transparent;cursor:pointer;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:10px 32px 10px 12px;
+  font:400 17px/1.15 'Old Standard TT',serif;color:var(--ink);
+  flex:1;min-width:150px;min-height:44px;
+  background-image:
+    linear-gradient(45deg,transparent 50%,var(--ink) 50%),
+    linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size:5px 5px, 5px 5px;background-repeat:no-repeat;
+  text-overflow:ellipsis;
+}
+.duty-sel:hover{border-color:var(--ink)}
+.duty-row.skipped .duty-sel{
+  color:var(--red);border-color:var(--red);text-decoration:line-through;
+}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.act{
+  appearance:none;cursor:pointer;background:none;border:1px solid var(--rule);
+  border-radius:2px;color:var(--ink-2);
+  font:500 12px/1 inherit;padding:9px 12px;min-height:40px;
+}
+.act:hover{border-color:var(--ink);color:var(--ink)}
+.act.skip:hover{border-color:var(--red);color:var(--red)}
+.act.skip.on{border-color:var(--red);background:var(--red);color:#fff}
+
+.note{
+  margin:0;padding:12px 18px;border-top:1px solid var(--rule);
+  font-size:12.5px;color:var(--ink-2);line-height:1.55;
+}
+.empty-note{padding:32px 18px;text-align:center;color:var(--ink-2);font-size:13.5px}
+
+.jhead{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.jhead .spacer{flex:1}
+.jwrap{
+  margin-top:6px;border:1px solid var(--rule);border-radius:2px;
+  overflow:auto;background:var(--sheet);max-height:75vh;
+  -webkit-overflow-scrolling:touch;
+}
+.journal{border-collapse:separate;border-spacing:0;font-size:12px}
+.journal th,.journal td{
+  border-right:1px solid var(--rule-soft);
+  border-bottom:1px solid var(--rule-soft);
+  height:34px;padding:0;text-align:center;min-width:30px;
+  position:relative;
+}
+.journal thead th{
+  height:28px;background:var(--sheet);color:var(--ink-2);
+  font:500 11px inherit;position:sticky;top:0;z-index:2;
+}
+.journal th.wknd{background:var(--paper);color:#9AA199}
+.journal th.today-h{color:var(--red)}
+.journal th.nm,.journal td.nm{
+  text-align:left;padding:0 12px;width:200px;min-width:200px;
+  background:var(--sheet);position:sticky;left:0;z-index:1;
+  font-size:13px;white-space:nowrap;border-right:1px solid var(--rule);
+}
+.journal thead th.nm{z-index:3}
+.journal td.cell-j{cursor:pointer;user-select:none;-webkit-user-select:none}
+.journal td.cell-j:active{background:#DEE3DB}
+
+.journal td.empty{color:#9AA199}
+.journal td.p{color:var(--ink);font-weight:500}
+.journal td.n{color:var(--red);font-weight:600}
+.journal td.u{color:var(--blue);font-weight:600}
+.journal td.b{color:var(--blue);font-weight:600;background:#E4E9F2}
+.journal td.z{color:var(--amber);font-weight:600}
+.journal td.wknd{background:var(--paper)}
+.journal td.wknd.empty{color:#C6CBC2}
+.journal td.wknd .num-badge{color:#B8BFB6}
+.journal td.has-note::after{
+  content:'';position:absolute;top:2px;right:2px;
+  width:4px;height:4px;border-radius:50%;background:var(--blue);
+}
+.journal td.sum{font:500 12px inherit;padding:0 12px;white-space:nowrap}
+.journal th.sum{padding:0 12px;white-space:nowrap;min-width:88px}
+.journal td.sum.warn{color:var(--red)}
+
+.sheet-back{
+  position:fixed;inset:0;background:rgba(23,32,46,.35);
+  z-index:100;opacity:0;transition:opacity .2s;
+  pointer-events:none;
+}
+.sheet-back.show{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:101;
+  background:var(--sheet);border-top:1px solid var(--ink);
+  border-radius:14px 14px 0 0;
+  padding:16px 18px calc(20px + var(--sab));
+  transform:translateY(100%);
+  transition:transform .28s cubic-bezier(.2,.8,.3,1);
+  max-height:80vh;overflow-y:auto;
+}
+.sheet.show{transform:translateY(0)}
+.sheet h3{font:400 20px/1.2 'Old Standard TT',serif;margin:0 0 4px}
+.sheet .sub{font-size:12.5px;color:var(--ink-2);margin:0 0 14px}
+.sheet-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;
+  margin-bottom:14px;
+}
+.sheet-grid button{
+  appearance:none;cursor:pointer;background:var(--paper);
+  border:1px solid var(--rule);border-radius:2px;
+  font:600 18px/1 inherit;color:var(--ink);
+  padding:14px 0;min-height:52px;
+}
+.sheet-grid button.on{border-color:var(--ink);background:var(--ink);color:var(--sheet)}
+.sheet-grid button.p{border-color:var(--ink);color:var(--ink)}
+.sheet-grid button.n{border-color:var(--red);color:var(--red)}
+.sheet-grid button.u{border-color:var(--blue);color:var(--blue)}
+.sheet-grid button.b{border-color:var(--blue);background:#E4E9F2;color:var(--blue)}
+.sheet-grid button.z{border-color:var(--amber);color:var(--amber)}
+.sheet-grid button.on.n{background:var(--red);color:#fff}
+.sheet-grid button.on.u{background:var(--blue);color:#fff}
+.sheet-grid button.on.b{background:var(--blue);color:#fff}
+.sheet-grid button.on.z{background:var(--amber);color:#fff}
+.sheet-grid button.on.p{background:var(--ink);color:var(--sheet)}
+
+.sheet textarea{
+  width:100%;min-height:64px;resize:vertical;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:9px 11px;font:400 15px inherit;color:var(--ink);
+  background:var(--paper);
+}
+.sheet textarea:focus{outline:0;border-color:var(--ink)}
+.sheet .sheet-actions{display:flex;gap:8px;margin-top:14px}
+.sheet .sheet-actions .btn{flex:1;justify-content:center;text-align:center}
+
+.chart-box{
+  border:1px solid var(--rule);border-radius:2px;
+  background:var(--sheet);padding:16px 18px;margin-top:14px;
+}
+.chart-box h3{font:400 18px/1 'Old Standard TT',serif;margin:0 0 4px}
+.chart-box .sub{font-size:12px;color:var(--ink-2);margin:0 0 14px}
+
+.bar-rows{display:flex;flex-direction:column;gap:8px}
+.bar-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.bar-row .lbl{
+  flex:none;width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--ink);
+}
+.bar-row .track{
+  flex:1;height:16px;background:var(--paper);border-radius:2px;overflow:hidden;
+}
+.bar-row .fill{
+  height:100%;background:var(--red);border-radius:2px;
+  transition:width .5s ease;
+}
+.bar-row .val{
+  flex:none;width:34px;text-align:right;font-weight:500;
+  color:var(--ink-2);font-variant-numeric:tabular-nums;
+}
+.bar-row.zero .fill{background:var(--rule);}
+.bar-row.zero .val{color:#9AA199}
+
+.day-bars{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  align-items:end;height:160px;margin-top:6px;
+}
+.day-bar{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  height:100%;justify-content:flex-end;
+}
+.day-bar .col{
+  width:100%;max-width:44px;background:var(--blue);
+  border-radius:2px 2px 0 0;min-height:2px;
+  transition:height .5s ease;
+}
+.day-bar .col.zero{background:var(--rule);}
+.day-bar .v{
+  font:500 11px inherit;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+}
+.day-bar .lbl{font-size:11px;color:var(--ink-2)}
+
+.marks-row{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;
+}
+.mark-chip{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:8px 12px;background:var(--paper);
+  font-size:13px;
+}
+.mark-chip .m{
+  font:600 14px/1 'Golos Text',monospace;
+  min-width:18px;text-align:center;
+}
+.mark-chip .m.p{color:var(--ink)}
+.mark-chip .m.n{color:var(--red)}
+.mark-chip .m.u{color:var(--blue)}
+.mark-chip .m.b{color:var(--blue)}
+.mark-chip .m.z{color:var(--amber)}
+.mark-chip .ct{font-weight:500;font-variant-numeric:tabular-nums}
+
+.drop{
+  border:1px dashed var(--ink-2);border-radius:2px;
+  background:var(--sheet);padding:36px 22px;text-align:center;
+  transition:background .15s ease, border-color .15s ease;
+}
+.drop.over{background:#E4E9E2;border-color:var(--ink)}
+.drop p{margin:0 0 4px;font:400 19px/1.2 'Old Standard TT',serif}
+.drop small{display:block;color:var(--ink-2);font-size:12.5px;margin-bottom:16px}
+
+.block{margin-top:30px}
+.block > h2{font:400 19px/1 'Old Standard TT',serif;margin:0 0 4px}
+.block > p.sub{margin:0 0 12px;font-size:13px;color:var(--ink-2)}
+
+.ptable{width:100%;border-collapse:collapse;font-size:14px;background:var(--sheet);
+  border:1px solid var(--rule)}
+.ptable th,.ptable td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--rule-soft)}
+.ptable thead th{font:500 11px inherit;color:var(--ink-2);border-bottom:1px solid var(--rule)}
+.ptable tr:last-child td{border-bottom:0}
+.ptable input,.ptable select{
+  background:transparent;border:1px solid transparent;border-radius:2px;
+  padding:6px 8px;font:400 14px inherit;color:var(--ink);width:100%;min-height:36px;
+}
+.ptable input:hover,.ptable select:hover{border-color:var(--rule)}
+.ptable input:focus,.ptable select:focus{border-color:var(--ink);outline:0}
+.row-btn{
+  appearance:none;background:none;border:1px solid var(--rule);
+  border-radius:2px;cursor:pointer;color:var(--ink-2);
+  width:34px;height:34px;padding:0;font:400 15px inherit;
+}
+.row-btn:hover{border-color:var(--red);color:var(--red)}
+
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;margin-top:8px;
+}
+.stat{
+  border:1px solid var(--rule);border-radius:2px;
+  background:var(--sheet);padding:14px 16px;
+}
+.stat b{display:block;font:400 26px/1 'Old Standard TT',serif;margin-bottom:4px}
+.stat span{font-size:11.5px;color:var(--ink-2);letter-spacing:.02em}
+.stat.warn b{color:var(--red)}
+
+.holidays{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.holiday-row{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border:1px solid var(--rule);border-radius:2px;
+  background:var(--sheet);
+}
+.holiday-row .dt{
+  font:500 13px inherit;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  min-width:110px;
+}
+.holiday-row .nm{flex:1;font-size:13.5px}
+.holiday-row .rm{
+  appearance:none;background:none;border:0;cursor:pointer;
+  color:var(--red);font:500 16px/1 inherit;padding:4px 8px;
+  border-radius:2px;
+}
+.holiday-row .rm:hover{background:var(--red);color:#fff}
+
+.holiday-form{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;
+  padding:14px;border:1px solid var(--rule);border-radius:2px;
+  background:var(--sheet);margin-bottom:10px;
+}
+.holiday-form label{
+  display:flex;flex-direction:column;gap:4px;
+  font-size:11.5px;color:var(--ink-2);
+}
+.holiday-form input{
+  border:1px solid var(--rule);border-radius:2px;
+  padding:8px 10px;font:400 14px inherit;color:var(--ink);
+  background:var(--paper);min-height:38px;
+}
+.holiday-form input:focus{outline:0;border-color:var(--ink)}
+
+.subtabs{
+  display:flex;gap:2px;flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);margin-bottom:18px;
+}
+.subtab{
+  appearance:none;background:none;border:0;cursor:pointer;
+  font:500 13px/1 inherit;color:var(--ink-2);
+  padding:10px 14px;border-bottom:2px solid transparent;
+}
+.subtab:hover{color:var(--ink)}
+.subtab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.subpane[hidden]{display:none}
+
+.rule-group{margin-top:22px}
+.rule-group:first-of-type{margin-top:16px}
+.rule-group h3{font:400 15px/1 'Old Standard TT',serif;margin:0 0 8px;color:var(--ink)}
+.rule{
+  display:flex;align-items:center;gap:16px;
+  padding:12px 0;border-bottom:1px solid var(--rule-soft);
+}
+.rule:first-of-type{border-top:1px solid var(--rule)}
+.rule p{margin:0;flex:1;font-size:14px}
+.rule .hint{display:block;margin-top:3px;font-size:12px;color:var(--ink-2);line-height:1.45}
+.sw{
+  flex:none;width:44px;height:26px;padding:0;cursor:pointer;
+  border:1px solid var(--ink);background:none;border-radius:2px;position:relative;
+}
+.sw::after{
+  content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
+  background:var(--ink);transition:transform .16s ease;
+}
+.sw[aria-pressed="true"]{background:var(--ink)}
+.sw[aria-pressed="true"]::after{background:var(--sheet);transform:translateX(18px)}
+.num-in{
+  flex:none;width:66px;padding:9px 8px;text-align:center;
+  border:1px solid var(--ink);border-radius:2px;background:none;
+  color:var(--ink);font:500 15px inherit;font-size:16px;min-height:40px;
+}
+
+.danger{
+  margin-top:16px;border:1px solid var(--red);
+  background:var(--sheet);border-radius:2px;padding:14px 16px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.danger p{margin:0;flex:1;font-size:13.5px;color:var(--ink);min-width:180px}
+.danger .hint{display:block;font-size:11.5px;color:var(--ink-2);margin-top:3px}
+.btn-danger{
+  appearance:none;cursor:pointer;border:1px solid var(--red);
+  background:none;color:var(--red);border-radius:2px;
+  font:500 13px/1 inherit;padding:9px 14px;min-height:38px;
+}
+.btn-danger:hover{background:var(--red);color:#fff}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(120px + var(--sab));
+  transform:translateX(-50%);
+  background:var(--ink);color:var(--sheet);
+  padding:12px 20px;border-radius:14px;font-size:13.5px;
+  z-index:120;pointer-events:none;max-width:calc(100vw - 32px);
+  box-shadow:0 12px 34px rgba(23,32,46,.28);
+  animation:tin .22s ease, tout .3s ease 3s forwards;
+  text-align:center;
+}
+@keyframes tin{from{opacity:0;transform:translate(-50%,14px)}}
+@keyframes tout{to{opacity:0;transform:translate(-50%,14px)}}
+
+.mobbar{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:40;
+  padding:8px 14px calc(10px + var(--sab));
+  pointer-events:none;
+}
+.mobbar-inner{
+  pointer-events:auto;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(244,245,241,.72);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(23,32,46,.08);
+  border-radius:24px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.65) inset,
+    0 12px 34px rgba(23,32,46,.16),
+    0 2px 8px rgba(23,32,46,.08);
+  overflow:hidden;
+  width:100%;
+  max-width:400px;
+  margin:0 auto;
+  transition:max-width .32s cubic-bezier(.25,.46,.45,.94),
+             padding .32s cubic-bezier(.25,.46,.45,.94),
+             border-radius .32s cubic-bezier(.25,.46,.45,.94);
+}
+.mobbar.minimized .mobbar-inner{
+  max-width:200px;padding:0;border-radius:20px;
+}
+.mobbar button{
+  appearance:none;background:none;border:0;cursor:pointer;
+  padding:9px 4px;
+  font:500 11px/1.15 inherit;color:var(--ink-2);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  min-height:56px;position:relative;
+  transition:color .18s ease, transform .18s ease,
+             opacity .28s ease, max-width .32s ease, padding .32s ease;
+  overflow:hidden;flex:1;max-width:110px;
+}
+.mobbar button .lbl{
+  transition:opacity .28s ease, max-height .28s ease, margin .28s ease;
+  max-height:20px;overflow:hidden;
+}
+.mobbar.minimized button .lbl{opacity:0;max-height:0;margin:0}
+.mobbar.minimized button{max-width:52px;padding:9px 4px}
+.mobbar button.on{color:var(--ink)}
+.mobbar button.on::after{
+  content:'';position:absolute;left:50%;bottom:5px;
+  width:16px;height:3px;border-radius:2px;
+  background:var(--ink);transform:translateX(-50%);
+  transition:width .2s ease, bottom .2s ease;
+}
+.mobbar.minimized button.on::after{width:20px;bottom:3px}
+.mobbar button:active{transform:scale(.94)}
+.mobbar button .ic{
+  display:block;width:22px;height:22px;
+  border:1.5px solid currentColor;border-radius:2px;position:relative;
+  flex:none;
+}
+.mobbar button .ic.i-cal::after{content:'';position:absolute;inset:5px 5px 3px 5px;border-top:1.5px solid currentColor}
+.mobbar button .ic.i-j::after{content:'';position:absolute;inset:5px 3px 3px 3px;
+  background:linear-gradient(currentColor,currentColor) top/100% 1.5px no-repeat,
+             linear-gradient(currentColor,currentColor) center/100% 1.5px no-repeat,
+             linear-gradient(currentColor,currentColor) bottom/100% 1.5px no-repeat}
+.mobbar button .ic.i-a::after{content:'';position:absolute;left:3px;right:3px;bottom:3px;
+  height:60%;
+  background:linear-gradient(to top,currentColor 0 30%,transparent 30%),
+             linear-gradient(to top,currentColor 0 60%,transparent 60%);
+  background-position:left bottom,right bottom;
+  background-size:45% 100%;
+  background-repeat:no-repeat;
+}
+.mobbar button .ic.i-g::before,.mobbar button .ic.i-g::after{content:'';position:absolute;background:currentColor;border-radius:50%}
+.mobbar button .ic.i-g::before{width:6px;height:6px;top:4px;left:8px}
+.mobbar button .ic.i-g::after{height:6px;bottom:3px;left:5px;right:5px;border-radius:3px}
+
+@media (max-width:820px){
+  .topbar{height:auto;padding:10px 14px;padding-top:calc(10px + var(--sat));gap:10px;flex-wrap:wrap}
+  .tabs{display:none}
+  .topbar .btn{font-size:12px;padding:8px 11px;min-height:34px}
+  .topbar .btn:first-of-type{display:none}
+  .save-dot{display:none}
+  .shell{display:block}
+  .side{display:none}
+  .main{padding:14px 12px 130px;max-width:100%}
+  .mobbar{display:block}
+  .month-nav h1{font-size:24px}
+  .month-nav{gap:8px;margin-bottom:10px}
+  .mn{width:38px;height:38px}
+  .legend{font-size:11px;gap:8px;margin-bottom:8px}
+  .legend code{font-size:11px;padding:2px 5px}
+  .cell{min-height:78px;padding:4px 4px 6px}
+  .cell .num{font-size:11px;margin-bottom:3px}
+  .loc{font-size:9px;margin-bottom:3px}
+  .who{font-size:10px;line-height:1.3}
+  .dow{padding:5px 2px;font-size:10.5px}
+  .day-head{padding:12px 14px}
+  .day-head h2{font-size:18px;width:100%}
+  .duty-row{padding:12px 14px;gap:8px}
+  .slot-tag{width:100%;font-size:10.5px}
+  .duty-sel{width:100%;font-size:16px}
+  .acts{width:100%;margin-left:0}
+  .act{flex:1;min-width:0}
+  .note{padding:11px 14px;font-size:12px}
+  .journal th.nm,.journal td.nm{width:150px;min-width:150px;font-size:12px;padding:0 8px}
+  .journal th,.journal td{min-width:28px;height:32px}
+  .journal thead th{height:26px}
+  .toast{bottom:calc(112px + var(--sab))}
+
+  .block{margin-top:18px}
+  .block > h2{font-size:16px;margin-bottom:2px}
+  .block > p.sub{font-size:12px;margin-bottom:8px}
+  .drop{padding:22px 14px}
+  .drop p{font-size:16px}
+  .drop small{font-size:11px;margin-bottom:12px}
+
+  .ptable{font-size:13px}
+  .ptable th,.ptable td{padding:4px 6px}
+  .ptable thead th{font-size:10px;padding:3px 6px}
+  .ptable input,.ptable select{
+    font-size:16px;padding:2px 4px;min-height:28px;line-height:1.2;
+  }
+  .ptable select{padding-right:20px}
+  .row-btn{
+    width:26px;height:26px;font-size:13px;line-height:1;
+    border-color:transparent;
+  }
+  .row-btn:hover,.row-btn:active{border-color:var(--red);color:var(--red)}
+
+  .rule{padding:9px 0;gap:10px}
+  .rule p{font-size:13px}
+  .rule .hint{font-size:11px;margin-top:2px}
+  .num-in{width:56px;padding:6px 6px;min-height:32px;font-size:16px}
+  .sw{width:38px;height:22px}
+  .sw::after{width:14px;height:14px;top:3px;left:3px}
+  .sw[aria-pressed="true"]::after{transform:translateX(16px)}
+
+  .rule-group{margin-top:16px}
+  .rule-group h3{font-size:13.5px;margin-bottom:6px}
+
+  .stats{gap:8px}
+  .stat{padding:10px 12px}
+  .stat b{font-size:22px}
+
+  .export-menu{right:auto;left:0}
+  .danger{padding:12px 14px}
+
+  .num-badge{min-width:18px;margin-right:6px;font-size:10.5px}
+  .roster .num-badge{min-width:16px;margin-right:3px}
+
+  .subtabs{margin-bottom:14px}
+  .subtab{padding:9px 11px;font-size:12.5px}
+
+  .chart-box{padding:12px 14px}
+  .bar-row .lbl{width:100px;font-size:12px}
+  .day-bars{height:120px}
+}
+@media (max-width:400px){
+  .cell{min-height:68px}
+  .who{font-size:9.5px}
+  .journal th.nm,.journal td.nm{width:128px;min-width:128px}
+  .ptable th,.ptable td{padding:3px 5px}
+  .ptable input,.ptable select{padding:2px 3px;min-height:26px}
+  .row-btn{width:22px;height:22px;font-size:12px}
+  .sheet-grid{grid-template-columns:repeat(6,1fr);gap:4px}
+  .sheet-grid button{padding:11px 0;font-size:16px;min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  @page{size:landscape;margin:12mm}
+  body{background:#fff;font-size:11px}
+  .topbar,.side,.mobbar,.toast,.month-nav button,
+  .acts,.day-panel .act,.legend .no-print,.save-dot,
+  .export-menu,.danger,.drop,.sheet,.sheet-back{display:none !important}
+  .shell{display:block}
+  .main{padding:0;max-width:none}
+  .pane[hidden]{display:none !important}
+  .month-nav h1{font-size:18px}
+  .cal{border-color:#333}
+  .cell,.dow{border-color:#333;background:#fff !important;background-image:none !important}
+  .cell.weekend{background:#f2f2f2 !important}
+  .journal{border-collapse:collapse;font-size:9px;width:auto}
+  .journal th,.journal td{border:1px solid #333;height:22px;min-width:20px}
+  .journal th.nm,.journal td.nm{background:#f6f6f6;position:static}
+  .jwrap{max-height:none;overflow:visible;border:0}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><b>MO-34</b><span>журнал</span></div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  data-pane="duties">Дежурства</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="journal">Посещаемость</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="analytics">Аналитика</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="import">Группа</button>
+  </nav>
+  <div class="spacer"></div>
+  <span class="save-dot" id="saveDot">сохранено</span>
+  <div class="export-wrap">
+    <button class="btn" id="exportBtn">Выгрузить ▾</button>
+    <div class="export-menu" id="exportMenu" hidden>
+      <button data-act="xlsx">Excel (.xlsx) — три листа</button>
+      <button data-act="csv">CSV — только журнал</button>
+      <button data-act="ics">Календарь (.ics) — дежурства</button>
+      <hr>
+      <button data-act="print">Печать / PDF</button>
+    </div>
+  </div>
+  <button class="btn btn-solid" id="topImportBtn">Группа</button>
+</header>
+
+<div class="shell">
+  <aside class="side">
+    <h2 id="rosterTitle">Группа · 29 человек</h2>
+    <input class="search" type="search" id="search" placeholder="Найти студента">
+    <ul class="roster" id="roster"></ul>
+  </aside>
+
+  <main class="main" id="main">
+
+    <section class="pane" id="pane-duties">
+      <div class="month-nav">
+        <button class="mn" id="prevMonth" aria-label="Предыдущий месяц">‹</button>
+        <h1 id="dutiesMonthLabel">Сентябрь 2026</h1>
+        <button class="mn" id="nextMonth" aria-label="Следующий месяц">›</button>
+        <button class="btn btn-sm" id="autoAssign">Расставить заново</button>
+      </div>
+      <div class="legend">
+        <span><b>Ауд.</b> — аудитория</span>
+        <span><b>Маст.</b> — мастерская</span>
+        <span><b>зачёркнуто</b> — перенесён</span>
+      </div>
+      <div class="cal" id="cal"></div>
+      <div id="dayPanelHost"></div>
+    </section>
+
+    <section class="pane" id="pane-journal" hidden>
+      <div class="month-nav">
+        <button class="mn" id="prevMonthJ" aria-label="Предыдущий месяц">‹</button>
+        <h1 id="journalMonthLabel">Сентябрь 2026</h1>
+        <button class="mn" id="nextMonthJ" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="jhead">
+        <button class="btn btn-sm" id="allPresentBtn">Все п за сегодня</button>
+        <span class="spacer"></span>
+        <span class="legend" style="margin:0">
+          <span>долгое нажатие — отметка и причина</span>
+        </span>
+      </div>
+      <div class="legend">
+        <span><code>·</code> пусто</span>
+        <span><code>п</code> был</span>
+        <span><code class="c-n">н</code> не был</span>
+        <span><code class="c-u">у</code> уваж.</span>
+        <span><code class="c-b">б</code> больничный</span>
+        <span><code class="c-z">з</code> заявление</span>
+      </div>
+      <div class="jwrap"><table class="journal" id="journal"></table></div>
+    </section>
+
+    <section class="pane" id="pane-analytics" hidden>
+      <div class="month-nav">
+        <button class="mn" id="prevMonthA" aria-label="Предыдущий месяц">‹</button>
+        <h1 id="analyticsMonthLabel">Сентябрь 2026</h1>
+        <button class="mn" id="nextMonthA" aria-label="Следующий месяц">›</button>
+      </div>
+
+      <div class="stats" id="statsTop"></div>
+
+      <div class="chart-box">
+        <h3>Кто чаще пропускает</h3>
+        <p class="sub">Топ-10 по отметкам «н» за месяц</p>
+        <div class="bar-rows" id="chartByStudent"></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>Пропуски по дням недели</h3>
+        <p class="sub">В какие дни группа пропускает чаще всего</p>
+        <div class="day-bars" id="chartByDay"></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>Состав отметок</h3>
+        <p class="sub">За весь месяц по всей группе</p>
+        <div class="marks-row" id="chartMarks"></div>
+      </div>
+    </section>
+
+    <section class="pane" id="pane-import" hidden>
+      <div class="month-nav"><h1>Группа</h1></div>
+
+      <div class="subtabs" role="tablist">
+        <button class="subtab" role="tab" aria-selected="true" data-sub="list">Список</button>
+        <button class="subtab" role="tab" aria-selected="false" data-sub="rules">Правила</button>
+        <button class="subtab" role="tab" aria-selected="false" data-sub="holidays">Праздники</button>
+        <button class="subtab" role="tab" aria-selected="false" data-sub="danger">Опасное</button>
+      </div>
+
+      <div class="subpane" id="sub-list">
+        <div class="block" style="margin-top:0">
+          <h2>Загрузить список</h2>
+          <p class="sub">Файл .docx, .xlsx или .csv — берём первую колонку с ФИО. Можно перетащить сюда.</p>
+          <div class="drop" id="drop">
+            <p>Перетащите файл</p>
+            <small>docx / xlsx / csv</small>
+            <button class="btn btn-solid" id="pickFile">Выбрать файл</button>
+            <input type="file" id="fileInput" hidden accept=".docx,.xlsx,.xls,.csv,.txt">
+          </div>
+        </div>
+
+        <div class="block">
+          <h2>Список группы · <span id="studentCount">29</span></h2>
+          <p class="sub">Правьте имена прямо в таблице. Подгруппа нужна, чтобы не ставить двоих из одной на один день.</p>
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th style="width:36px">№</th>
+                <th>Фамилия и имя</th>
+                <th style="width:90px">Подгр.</th>
+                <th style="width:50px"></th>
+              </tr>
+            </thead>
+            <tbody id="ptbody"></tbody>
+          </table>
+          <p class="sub" style="margin-top:12px">
+            <button class="btn btn-sm" id="addStudent">Добавить студента</button>
+          </p>
+        </div>
+      </div>
+
+      <div class="subpane" id="sub-rules" hidden>
+        <p class="sub" style="margin-top:0">Применяются при расстановке, переносах и выборе замены.</p>
+
+        <div class="rule-group">
+          <h3>Расстановка</h3>
+          <div class="rule">
+            <p>Минимум дежурств за месяц<span class="hint">Кто не набрал — уходит в долг на следующий месяц.</span></p>
+            <input class="num-in" type="text" value="2" inputmode="numeric" data-rule="min">
+          </div>
+          <div class="rule">
+            <p>Максимум дежурств за месяц<span class="hint">Чтобы один не закрывал чужую очередь.</span></p>
+            <input class="num-in" type="text" value="3" inputmode="numeric" data-rule="max">
+          </div>
+          <div class="rule">
+            <p>Минимальный интервал<span class="hint">Сколько дней должно пройти, прежде чем человек встанет в календарь снова.</span></p>
+            <input class="num-in" type="text" value="3" inputmode="numeric" data-rule="interval">
+          </div>
+          <div class="rule">
+            <p>Должники идут первыми<span class="hint">При расстановке встают в начало очереди.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="priorityDebtors" aria-label="Должники идут первыми"></button>
+          </div>
+          <div class="rule">
+            <p>Не ставить двоих из одной подгруппы<span class="hint">Разводит первую и вторую подгруппу по дням.</span></p>
+            <button class="sw" aria-pressed="false" data-rule="splitSubs" aria-label="Разводить подгруппы"></button>
+          </div>
+          <div class="rule">
+            <p>Чередовать Ауд. и Маст.<span class="hint">Один день в аудитории, следующий — в мастерской.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="alternate" aria-label="Чередовать места"></button>
+          </div>
+        </div>
+
+        <div class="rule-group">
+          <h3>Переносы и замены</h3>
+          <div class="rule">
+            <p>Больничный переносит<span class="hint">Отметка «б» — переносит человека, на день встаёт замена.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="sickSkips" aria-label="Больничный переносит"></button>
+          </div>
+          <div class="rule">
+            <p>Уважительная переносит<span class="hint">Отметка «у» — тот же эффект.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="validSkips" aria-label="Уважительная переносит"></button>
+          </div>
+          <div class="rule">
+            <p>Заявление переносит<span class="hint">Отметка «з» — тот же эффект.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="statementSkips" aria-label="Заявление переносит"></button>
+          </div>
+          <div class="rule">
+            <p>Скип вручную<span class="hint">Староста снимает дежурного, не дожидаясь отметки.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="manualSkip" aria-label="Ручной скип"></button>
+          </div>
+          <div class="rule">
+            <p>Переносить в начало месяца<span class="hint">Свободный день ищется с 1-го числа.</span></p>
+            <button class="sw" aria-pressed="false" data-rule="moveToStart" aria-label="Переносить в начало месяца"></button>
+          </div>
+          <div class="rule">
+            <p>Замена — только без долгов<span class="hint">На замену ставим без задолженностей.</span></p>
+            <button class="sw" aria-pressed="false" data-rule="substituteNoDebt" aria-label="Замена без долгов"></button>
+          </div>
+        </div>
+
+        <div class="rule-group">
+          <h3>Долги и напоминания</h3>
+          <div class="rule">
+            <p>Долг не сгорает<span class="hint">Переносится в следующий месяц и остаётся.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="debtForever" aria-label="Долг не сгорает"></button>
+          </div>
+          <div class="rule">
+            <p>Напоминать за день<span class="hint">Сообщение дежурным вечером накануне.</span></p>
+            <button class="sw" aria-pressed="true" data-rule="notifyDayBefore" aria-label="Напоминать за день"></button>
+          </div>
+          <div class="rule">
+            <p>Напоминать утром<span class="hint">Короткое напоминание до первой пары.</span></p>
+            <button class="sw" aria-pressed="false" data-rule="notifyMorning" aria-label="Напоминать утром"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="subpane" id="sub-holidays" hidden>
+        <p class="sub" style="margin-top:0">Даты, когда дежурств нет: праздники, каникулы, выходные дни учёбы. При расстановке такие дни пропускаются.</p>
+
+        <div class="holiday-form">
+          <label>
+            Дата
+            <input type="date" id="holidayDate">
+          </label>
+          <label style="flex:1;min-width:180px">
+            Название
+            <input type="text" id="holidayName" placeholder="Например, День города">
+          </label>
+          <button class="btn btn-solid" id="holidayAdd">Добавить</button>
+        </div>
+
+        <div class="holidays" id="holidayList"></div>
+      </div>
+
+      <div class="subpane" id="sub-danger" hidden>
+        <div class="danger" style="margin-top:0">
+          <p>
+            Сбросить все данные
+            <span class="hint">Сотрёт студентов, дежурства, отметки и долги. Действие необратимо.</span>
+          </p>
+          <button class="btn-danger" id="resetAll">Сбросить всё</button>
+        </div>
+
+        <div class="danger" style="border-color:var(--rule)">
+          <p>
+            Очистить старые месяцы
+            <span class="hint">Удалит дежурства и отметки за все месяцы, кроме текущего. Освободит память.</span>
+          </p>
+          <button class="btn" id="clearOld">Очистить</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<div class="sheet-back" id="sheetBack"></div>
+<div class="sheet" id="sheet">
+  <h3 id="sheetTitle">Отметка</h3>
+  <p class="sub" id="sheetSub"></p>
+
+  <div class="sheet-grid" id="sheetGrid">
+    <button data-mark=""  class="on" title="Пусто">·</button>
+    <button data-mark="п" class="p"  title="Присутствовал">п</button>
+    <button data-mark="н" class="n"  title="Не был">н</button>
+    <button data-mark="у" class="u"  title="Уважительная">у</button>
+    <button data-mark="б" class="b"  title="Больничный">б</button>
+    <button data-mark="з" class="z"  title="Заявление">з</button>
+  </div>
+
+  <label style="display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:6px">
+    Причина или комментарий (необязательно)
+  </label>
+  <textarea id="sheetNote" placeholder="Например: стоматолог, справка №12"></textarea>
+
+  <div class="sheet-actions">
+    <button class="btn" id="sheetCancel">Отмена</button>
+    <button class="btn btn-solid" id="sheetSave">Сохранить</button>
+  </div>
+</div>
+
+<nav class="mobbar" id="mobbar" aria-label="Разделы">
+  <div class="mobbar-inner" id="mobbarInner">
+    <button data-pane="duties" class="on"><span class="ic i-cal"></span><span class="lbl">Дежурства</span></button>
+    <button data-pane="journal"><span class="ic i-j"></span><span class="lbl">Журнал</span></button>
+    <button data-pane="analytics"><span class="ic i-a"></span><span class="lbl">Аналитика</span></button>
+    <button data-pane="import"><span class="ic i-g"></span><span class="lbl">Группа</span></button>
+  </div>
+</nav>
+
+<script>
+/* ═════════ константы ═════════ */
+const MONTHS     = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DOW_SHORT  = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const DOW_FULL   = ['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'];
+const LOCS = [{loc:'Ауд.',type:'aud'},{loc:'Маст.',type:'mas'}];
+const TODAY = {y:2026, m:9, d:21};
+const TAB_ORDER = ['duties','journal','analytics','import'];
+const MARK_CYCLE = ['', 'п', 'н', 'у', 'б', 'з'];
+const LS_KEY = 'mo34_journal_v1';
+
+const DEFAULT_NAMES = [
+  'Амельченко Дарья В.','Бакулин Дмитрий П.','Бегишев Родион Ю.','Вербовский Тимофей П.',
+  'Галеня Константин А.','Гертман Алексей А.','Гребенчук Артём Д.','Григорьев Артём С.',
+  'Гуров Егор Г.','Долгов Даниил И.','Евтушков Денис С.','Езерский Даниил П.',
+  'Клопоток Алексей А.','Косянчук Мария В.','Кубай Глеб Ю.','Кузьменок Даниил А.',
+  'Лисицкий Егор С.','Михайлов Станислав И.','Морозов Евгений В.','Петров Дмитрий А.',
+  'Пытлев Данила А.','Силенко Арсений В.','Стасенков Александр С.','Тараканова Вероника В.',
+  'Тарасенко Дмитрий В.','Трибилустов Артём К.','Ус Дмитрий В.','Черноусов Артём А.',
+  'Чирков Вячеслав М.'
+];
+
+function defaultState(){
+  return {
+    students: DEFAULT_NAMES.map((full, i) => ({id: i + 1, full, sub: (i % 2) + 1})),
+    duties: {}, attendance: {}, debts: {},
+    comments: {},
+    holidays: [],
+    currentMonth: '2026-09', currentTab: 'duties',
+    selectedDay: 21, filter: '',
+    rules: {
+      min: 2, max: 3, interval: 3,
+      priorityDebtors: true, splitSubs: false, alternate: true,
+      sickSkips: true, validSkips: true, statementSkips: true, manualSkip: true,
+      moveToStart: false, substituteNoDebt: false,
+      debtForever: true, notifyDayBefore: true, notifyMorning: false
+    }
+  };
+}
+
+let state = defaultState();
+
+/* ═════════ утилиты ═════════ */
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const mkKey = (y,m) => y + '-' + String(m).padStart(2,'0');
+const parseKey = k => { const [y,m] = k.split('-').map(Number); return {y,m}; };
+const daysIn   = (y,m) => new Date(y, m, 0).getDate();
+const dowMon   = (y,m,d) => { const w = new Date(y,m-1,d).getDay(); return w===0?6:w-1; };
+const byId     = id => state.students.find(s => s.id === id);
+const shortName = full => { const [a, b] = full.split(' '); return b ? a + ' ' + b[0] + '.' : a; };
+const rnd = n => Math.floor(Math.random() * n);
+function shuffle(a){ for (let i = a.length-1; i>0; i--){ const j = rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3400);
+}
+
+let saveTimer = null;
+let quotaWarned = false;
+function saveSoon(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 400);
+}
+function saveNow(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    const dot = $('#saveDot');
+    if (dot){
+      dot.classList.add('show');
+      setTimeout(() => dot.classList.remove('show'), 800);
+    }
+  }catch(e){
+    if (!quotaWarned){
+      quotaWarned = true;
+      toast('Память браузера переполнена — изменения видны, но не сохранятся. Очистите старые месяцы во вкладке «Опасное».');
+      setTimeout(() => quotaWarned = false, 8000);
+    }
+  }
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.students) return false;
+    state = Object.assign(defaultState(), data);
+    state.rules = Object.assign(defaultState().rules, data.rules || {});
+    if (!Array.isArray(state.holidays)) state.holidays = [];
+    if (!state.comments) state.comments = {};
+    // подчищаем возможные остатки старых полей
+    delete state.files;
+    delete state.folders;
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ═════════ праздники ═════════ */
+function isHoliday(monthKey, day){
+  const iso = monthKey + '-' + String(day).padStart(2,'0');
+  return state.holidays.find(h => h.date === iso);
+}
+
+/* ═════════ правила ═════════ */
+function isSkipped(monthKey, day, sid){
+  const d = state.duties[monthKey]?.[day];
+  if (!d || !d.pair.includes(sid)) return false;
+  if (d.skips.includes(sid)) return true;
+  const att = state.attendance[monthKey]?.[sid]?.[day];
+  if (att === 'б' && state.rules.sickSkips)       return true;
+  if (att === 'у' && state.rules.validSkips)      return true;
+  if (att === 'з' && state.rules.statementSkips)  return true;
+  return false;
+}
+function dutyCount(monthKey, sid){
+  const d = state.duties[monthKey] || {};
+  let n = 0;
+  for (const day in d){
+    if (d[day].pair.includes(sid) && !isSkipped(monthKey, +day, sid)) n++;
+  }
+  return n;
+}
+function lastDutyDay(monthKey, sid, beforeDay){
+  const month = state.duties[monthKey] || {};
+  let last = 0;
+  for (const day in month){
+    const d = +day;
+    if (beforeDay !== undefined && d >= beforeDay) continue;
+    if (month[day].pair.includes(sid)) last = Math.max(last, d);
+  }
+  return last;
+}
+function violatesInterval(monthKey, day, sid){
+  const last = lastDutyDay(monthKey, day, sid);
+  if (!last) return false;
+  return (day - last) < state.rules.interval;
+}
+
+function pickSubstitute(monthKey, day, exclude){
+  const students = state.students.slice();
+  const excludeSet = new Set(exclude || []);
+  students.sort((a,b) => {
+    const ra = violatesInterval(monthKey, day, a.id) ? 1 : 0;
+    const rb = violatesInterval(monthKey, day, b.id) ? 1 : 0;
+    if (ra !== rb) return ra - rb;
+    if (state.rules.substituteNoDebt){
+      const da = state.debts[a.id] || 0, db = state.debts[b.id] || 0;
+      if (da !== db) return da - db;
+    }
+    const ca = dutyCount(monthKey, a.id), cb = dutyCount(monthKey, b.id);
+    if (ca !== cb) return ca - cb;
+    return a.full.localeCompare(b.full);
+  });
+  for (const s of students){
+    if (excludeSet.has(s.id)) continue;
+    if (dutyCount(monthKey, s.id) >= state.rules.max) continue;
+    if (state.rules.substituteNoDebt && (state.debts[s.id] || 0) > 0) continue;
+    return s.id;
+  }
+  return students.find(s => !excludeSet.has(s.id))?.id ?? null;
+}
+
+function findFreeDay(monthKey, fromDay, sid){
+  const {y, m} = parseKey(monthKey);
+  const total = daysIn(y, m);
+  const month = state.duties[monthKey];
+  const found = [];
+  for (let dd = 1; dd <= total; dd++){
+    if (!state.rules.moveToStart && dd <= fromDay) continue;
+    if (state.rules.moveToStart && dd === fromDay) continue;
+    const w = dowMon(y, m, dd);
+    if (w >= 5) continue;
+    if (isHoliday(monthKey, dd)) continue;
+    const target = month[dd];
+    if (!target) continue;
+    if (target.pair.includes(sid)) continue;
+    const freeSlot = target.pair.indexOf(null);
+    if (freeSlot === -1) continue;
+    found.push({dd, slot: freeSlot});
+  }
+  return found[0] || null;
+}
+
+function skipAndMove(monthKey, day, sid, reason){
+  const month = state.duties[monthKey];
+  const d = month[day];
+  const slot = d.pair.indexOf(sid);
+  if (slot === -1) return null;
+
+  d.skips = d.skips.filter(x => x !== sid);
+  d.pair[slot] = null;
+
+  let movedTo = null;
+  const target = findFreeDay(monthKey, day, sid);
+  if (target){
+    month[target.dd].pair[target.slot] = sid;
+    movedTo = target.dd;
+  } else if (state.rules.debtForever){
+    state.debts[sid] = (state.debts[sid] || 0) + 1;
+  }
+
+  const sub = pickSubstitute(monthKey, day, [sid]);
+  month[day].pair[slot] = sub;
+  month[day].skips = month[day].skips.filter(x => x !== sid);
+
+  const whom = shortName(byId(sid).full);
+  const subName = sub ? shortName(byId(sub).full) : '—';
+  const moveTxt = movedTo ? ' → ' + movedTo : ' в долг';
+  let prefix = 'Перенос';
+  if (reason === 'sick')            prefix = 'Болеет';
+  else if (reason === 'valid')      prefix = 'Уваж.';
+  else if (reason === 'statement')  prefix = 'Заявление';
+  toast(`${prefix}: ${whom}${moveTxt}. Замена: ${subName}`);
+  return {movedTo, sub};
+}
+
+function renderRoster(){
+  const host = $('#roster');
+  const q = state.filter.toLowerCase();
+  host.innerHTML = '';
+  const list = state.students.filter(s => !q || s.full.toLowerCase().includes(q));
+  $('#rosterTitle').textContent =
+    'Группа · ' + state.students.length + ' человек' +
+    (state.currentMonth !== '2026-09' ? ' · ' + MONTHS[parseKey(state.currentMonth).m-1] : '');
+
+  list.forEach(s => {
+    const num = state.students.indexOf(s) + 1;
+    const done = dutyCount(state.currentMonth, s.id);
+    const need = state.rules.min;
+    const debt = state.debts[s.id] || 0;
+    const ticks = [0,1].map(i => `<i class="${i < Math.min(done, need) ? 'on' : ''}"></i>`).join('');
+    const extra = done > need ? `<em class="extra">+${done - need}</em>` : '';
+
+    let debtHtml = '';
+    if (debt > 0){
+      debtHtml = `<span class="debt-wrap">
+        <span class="debt">долг ${debt}</span>
+        <button class="debt-clear" data-sid="${s.id}" title="Отменить долг">×</button>
+      </span>`;
+    }
+
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="num-badge">${num}</span><span class="nm">${s.full}</span><span class="ticks">${ticks}</span>${extra}${debtHtml}`;
+    host.appendChild(li);
+  });
+
+  host.querySelectorAll('.debt-clear').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = +btn.dataset.sid;
+      state.debts[id] = 0;
+      toast(shortName(byId(id).full) + ' — долг снят');
+      renderAll();
+    });
+  });
+}
+
+function renderCalendar(){
+  const {y,m} = parseKey(state.currentMonth);
+  const cal = $('#cal');
+  cal.innerHTML = '';
+  $('#dutiesMonthLabel').textContent = MONTHS[m-1] + ' ' + y;
+
+  DOW_SHORT.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'dow';
+    h.textContent = d;
+    cal.appendChild(h);
+  });
+
+  const total = daysIn(y,m);
+  const lead  = dowMon(y,m,1);
+  const cells = Math.ceil((lead + total) / 7) * 7;
+  const duties = state.duties[state.currentMonth] || {};
+
+  for (let i = 0; i < cells; i++){
+    const day = i - lead + 1;
+    const idx = i % 7;
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    if (idx >= 5) cell.classList.add('weekend');
+    if (day < 1 || day > total){ cell.classList.add('empty'); cal.appendChild(cell); continue; }
+    const hol = isHoliday(state.currentMonth, day);
+    if (hol) cell.classList.add('holiday');
+    if (y === TODAY.y && m === TODAY.m && day === TODAY.d) cell.classList.add('today');
+    if (day === state.selectedDay) cell.classList.add('sel');
+
+    let html = `<span class="num">${day}</span>`;
+    if (hol){
+      html += `<div class="holiday-name">${hol.name || 'праздник'}</div>`;
+    } else {
+      const d = duties[day];
+      if (d && idx < 5){
+        html += `<div class="loc ${d.type==='mas'?'mas':''}">${d.loc}</div>`;
+        html += d.pair.map(sid => {
+          if (!sid) return '';
+          const s = byId(sid);
+          if (!s) return '';
+          const sk = isSkipped(state.currentMonth, day, sid);
+          return `<span class="who ${sk?'skipped':''}">${shortName(s.full)}</span>`;
+        }).join('');
+      }
+    }
+    cell.innerHTML = html;
+
+    if (idx < 5 && !hol){
+      cell.addEventListener('click', () => {
+        state.selectedDay = day;
+        renderCalendar();
+        renderDayPanel();
+      });
+    }
+    cal.appendChild(cell);
+  }
+}
+
+function renderDayPanel(){
+  const host = $('#dayPanelHost');
+  const {y,m} = parseKey(state.currentMonth);
+  const day = state.selectedDay;
+  const total = daysIn(y,m);
+  if (!day || day < 1 || day > total){ host.innerHTML = ''; return; }
+
+  const duties = state.duties[state.currentMonth] || (state.duties[state.currentMonth] = {});
+  const d = duties[day];
+  const dow = dowMon(y,m,day);
+  const isWeekend = dow >= 5;
+  const hol = isHoliday(state.currentMonth, day);
+  const dateLabel = DOW_FULL[dow][0].toUpperCase() + DOW_FULL[dow].slice(1) + ', ' + day + ' ' + MONTHS_GEN[m-1];
+  const todayMark = (y===TODAY.y && m===TODAY.m && day===TODAY.d) ? ' · сегодня' : '';
+
+  if (hol){
+    host.innerHTML = `
+      <div class="day-panel">
+        <div class="day-head"><h2>${dateLabel}${todayMark}</h2></div>
+        <div class="empty-note">${hol.name || 'Праздник'} — дежурств нет.</div>
+      </div>`;
+    return;
+  }
+
+  if (isWeekend){
+    host.innerHTML = `
+      <div class="day-panel">
+        <div class="day-head"><h2>${dateLabel}${todayMark}</h2></div>
+        <div class="empty-note">Выходной — дежурств нет.</div>
+      </div>`;
+    return;
+  }
+
+  if (!d){
+    host.innerHTML = `
+      <div class="day-panel">
+        <div class="day-head"><h2>${dateLabel}${todayMark}</h2></div>
+        <div class="empty-note">
+          Дежурные не назначены.<br>
+          <button class="btn btn-sm" id="assignDay" style="margin-top:14px">Назначить</button>
+        </div>
+      </div>`;
+    $('#assignDay').addEventListener('click', () => {
+      const p1 = pickSubstitute(state.currentMonth, day, []);
+      const p2 = pickSubstitute(state.currentMonth, day, [p1]);
+      duties[day] = {loc: LOCS[0].loc, type: LOCS[0].type, pair: [p1, p2], skips: []};
+      renderAll();
+    });
+    return;
+  }
+
+  const locSelect = LOCS.map(L =>
+    `<option value="${L.loc}|${L.type}" ${L.loc === d.loc ? 'selected' : ''}>${L.loc}</option>`
+  ).join('');
+
+  const rows = d.pair.map((sid, slot) => {
+    if (!sid) return '';
+    const sk = isSkipped(state.currentMonth, day, sid);
+    const options = state.students.map(s => {
+      const num = state.students.indexOf(s) + 1;
+      return `<option value="${s.id}" ${s.id === sid ? 'selected' : ''}>${num}. ${s.full}</option>`;
+    }).join('');
+    return `
+      <div class="duty-row ${sk?'skipped':''}" data-slot="${slot}">
+        <span class="slot-tag">Дежурный ${slot+1}</span>
+        <select class="duty-sel" data-slot="${slot}">${options}</select>
+        <div class="acts">
+          <button class="act skip ${sk?'on':''}" data-slot="${slot}">${sk ? 'Вернуть' : 'Скип'}</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  host.innerHTML = `
+    <div class="day-panel">
+      <div class="day-head">
+        <h2>${dateLabel}${todayMark}</h2>
+        <span class="loc"><select class="loc-select" id="locSelect">${locSelect}</select></span>
+      </div>
+      ${rows}
+      <p class="note">
+        Скип переносит человека на другой день и ставит замену.
+        Отметки «б», «у» и «з» в журнале делают то же автоматически.
+      </p>
+    </div>`;
+
+  $('#locSelect').addEventListener('change', e => {
+    const [loc, type] = e.target.value.split('|');
+    d.loc = loc; d.type = type;
+    renderCalendar();
+  });
+
+  host.querySelectorAll('.duty-sel').forEach(sel => {
+    sel.addEventListener('change', e => {
+      const slot = +e.target.dataset.slot;
+      const newId = +e.target.value;
+      const oldId = d.pair[slot];
+      d.pair[slot] = newId;
+      d.skips = d.skips.filter(id => id !== oldId && id !== newId);
+      renderAll();
+    });
+  });
+
+  host.querySelectorAll('.act.skip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const slot = +btn.dataset.slot;
+      const sid = d.pair[slot];
+      if (!sid) return;
+      if (d.skips.includes(sid)){
+        d.skips = d.skips.filter(x => x !== sid);
+        toast('Скип снят');
+        renderAll();
+        return;
+      }
+      if (!state.rules.manualSkip) return;
+      skipAndMove(state.currentMonth, day, sid, 'manual');
+      renderAll();
+    });
+  });
+}
+
+function renderJournal(){
+  const {y,m} = parseKey(state.currentMonth);
+  $('#journalMonthLabel').textContent = MONTHS[m-1] + ' ' + y;
+
+  const total = daysIn(y,m);
+  const att = state.attendance[state.currentMonth] || (state.attendance[state.currentMonth] = {});
+  const cmt = state.comments[state.currentMonth] || (state.comments[state.currentMonth] = {});
+
+  let head = '<thead><tr><th class="nm">Студент</th>';
+  for (let d = 1; d <= total; d++){
+    const w = dowMon(y,m,d);
+    const cls = [];
+    if (w >= 5) cls.push('wknd');
+    if (isHoliday(state.currentMonth, d)) cls.push('wknd');
+    if (y===TODAY.y && m===TODAY.m && d===TODAY.d) cls.push('today-h');
+    head += `<th class="${cls.join(' ')}">${d}</th>`;
+  }
+  head += '<th class="sum">Пропуски</th></tr></thead>';
+
+  let body = '<tbody>';
+  state.students.forEach((s, i) => {
+    const row = att[s.id] || (att[s.id] = {});
+    const cRow = cmt[s.id] || {};
+    let missed = 0, cells = '';
+    for (let d = 1; d <= total; d++){
+      const w = dowMon(y,m,d);
+      const wk = (w >= 5 || isHoliday(state.currentMonth, d)) ? 'wknd' : '';
+      const v = row[d] || '';
+      if (v === 'н') missed++;
+      let cls = wk;
+      if      (v === 'п') cls += ' p';
+      else if (v === 'н') cls += ' n';
+      else if (v === 'у') cls += ' u';
+      else if (v === 'б') cls += ' b';
+      else if (v === 'з') cls += ' z';
+      else                cls += ' empty';
+      if (cRow[d]) cls += ' has-note';
+      const display = v || '·';
+      cells += `<td class="cell-j ${cls.trim()}" data-sid="${s.id}" data-day="${d}">${display}</td>`;
+    }
+    const warn = missed > 4 ? ' warn' : '';
+    body += `<tr><td class="nm"><span class="num-badge">${i+1}</span>${s.full}</td>${cells}<td class="sum${warn}">${missed || '—'}</td></tr>`;
+  });
+  body += '</tbody>';
+
+  $('#journal').innerHTML = head + body;
+
+  $$('#journal td.cell-j').forEach(td => {
+    const sid = +td.dataset.sid, day = +td.dataset.day;
+    let pressTimer = null, longFired = false;
+
+    const startPress = () => {
+      longFired = false;
+      pressTimer = setTimeout(() => {
+        longFired = true;
+        openSheet(sid, day);
+      }, 450);
+    };
+    const cancelPress = () => { clearTimeout(pressTimer); };
+
+    td.addEventListener('touchstart', startPress, {passive:true});
+    td.addEventListener('touchend', cancelPress);
+    td.addEventListener('touchmove', cancelPress);
+    td.addEventListener('touchcancel', cancelPress);
+    td.addEventListener('mousedown', startPress);
+    td.addEventListener('mouseup', cancelPress);
+    td.addEventListener('mouseleave', cancelPress);
+
+    td.addEventListener('click', () => {
+      if (longFired) return;
+      cycleMark(sid, day);
+    });
+
+    td.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      openSheet(sid, day);
+    });
+  });
+}
+
+function cycleMark(sid, day){
+  const monthKey = state.currentMonth;
+  const att = state.attendance[monthKey] || (state.attendance[monthKey] = {});
+  const row = att[sid] || (att[sid] = {});
+  const cur = row[day] || '';
+  const i = MARK_CYCLE.indexOf(cur);
+  const next = MARK_CYCLE[(i + 1) % MARK_CYCLE.length];
+  if (next === '') delete row[day]; else row[day] = next;
+  handleAutoSkip(sid, day, next);
+  renderAll();
+}
+
+function handleAutoSkip(sid, day, mark){
+  const duties = state.duties[state.currentMonth];
+  const dd = duties?.[day];
+  if (!dd || !dd.pair.includes(sid)) return;
+  if (!(mark === 'б' || mark === 'у' || mark === 'з')) return;
+  const flagMap = {б:'sickSkips', у:'validSkips', з:'statementSkips'};
+  const reasonMap = {б:'sick', у:'valid', з:'statement'};
+  const canSkip = state.rules[flagMap[mark]];
+  if (canSkip && !dd.skips.includes(sid)){
+    skipAndMove(state.currentMonth, day, sid, reasonMap[mark]);
+  }
+}
+
+const sheet = $('#sheet'), sheetBack = $('#sheetBack');
+let sheetSid = null, sheetDay = null;
+
+function openSheet(sid, day){
+  sheetSid = sid; sheetDay = day;
+  const s = byId(sid);
+  const {m} = parseKey(state.currentMonth);
+  $('#sheetTitle').textContent = s.full;
+  $('#sheetSub').textContent = day + ' ' + MONTHS_GEN[m-1];
+
+  const att = state.attendance[state.currentMonth] || {};
+  const cur = (att[sid] || {})[day] || '';
+  $$('#sheetGrid button').forEach(b => b.classList.toggle('on', (b.dataset.mark || '') === cur));
+
+  const cmt = state.comments[state.currentMonth] || {};
+  $('#sheetNote').value = (cmt[sid] || {})[day] || '';
+
+  sheetBack.classList.add('show');
+  sheet.classList.add('show');
+}
+function closeSheet(){
+  sheetBack.classList.remove('show');
+  sheet.classList.remove('show');
+}
+
+$('#sheetGrid').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  $$('#sheetGrid button').forEach(x => x.classList.toggle('on', x === b));
+});
+$('#sheetCancel').addEventListener('click', closeSheet);
+sheetBack.addEventListener('click', closeSheet);
+
+$('#sheetSave').addEventListener('click', () => {
+  if (sheetSid == null || sheetDay == null) return;
+  const mark = $$('#sheetGrid button.on')[0]?.dataset.mark || '';
+  const note = $('#sheetNote').value.trim();
+
+  const monthKey = state.currentMonth;
+  const att = state.attendance[monthKey] || (state.attendance[monthKey] = {});
+  const row = att[sheetSid] || (att[sheetSid] = {});
+  if (mark) row[sheetDay] = mark; else delete row[sheetDay];
+
+  const cmt = state.comments[monthKey] || (state.comments[monthKey] = {});
+  const cRow = cmt[sheetSid] || (cmt[sheetSid] = {});
+  if (note) cRow[sheetDay] = note; else delete cRow[sheetDay];
+
+  handleAutoSkip(sheetSid, sheetDay, mark);
+  closeSheet();
+  renderAll();
+});
+
+$('#allPresentBtn').addEventListener('click', () => {
+  const {y,m} = parseKey(state.currentMonth);
+  const isCurMonth = (y === TODAY.y && m === TODAY.m);
+  const day = isCurMonth ? TODAY.d : state.selectedDay;
+  if (!day) { toast('Выберите день'); return; }
+  const w = dowMon(y, m, day);
+  if (w >= 5 || isHoliday(state.currentMonth, day)){
+    toast('В этот день нет пар');
+    return;
+  }
+  if (!confirm('Отметить всех присутствующими за ' + day + ' ' + MONTHS_GEN[m-1] + '?')) return;
+
+  const att = state.attendance[state.currentMonth] || (state.attendance[state.currentMonth] = {});
+  state.students.forEach(s => {
+    const row = att[s.id] || (att[s.id] = {});
+    if (!row[day]) row[day] = 'п';
+  });
+  renderAll();
+  toast('Отмечено: все «п»');
+});
+
+function renderAnalytics(){
+  const {y,m} = parseKey(state.currentMonth);
+  $('#analyticsMonthLabel').textContent = MONTHS[m-1] + ' ' + y;
+
+  const monthKey = state.currentMonth;
+  const total = daysIn(y,m);
+  const att = state.attendance[monthKey] || {};
+
+  let missedTotal = 0, presentTotal = 0, validTotal = 0, sickTotal = 0, stmtTotal = 0;
+  state.students.forEach(s => {
+    const row = att[s.id] || {};
+    for (let d = 1; d <= total; d++){
+      const v = row[d];
+      if (v === 'н') missedTotal++;
+      else if (v === 'п') presentTotal++;
+      else if (v === 'у') validTotal++;
+      else if (v === 'б') sickTotal++;
+      else if (v === 'з') stmtTotal++;
+    }
+  });
+
+  const debtors = state.students.filter(s => (state.debts[s.id] || 0) > 0).length;
+
+  $('#statsTop').innerHTML = `
+    <div class="stat${missedTotal ? ' warn' : ''}"><b>${missedTotal}</b><span>пропусков за месяц</span></div>
+    <div class="stat"><b>${presentTotal}</b><span>отметок «был»</span></div>
+    <div class="stat"><b>${validTotal + sickTotal + stmtTotal}</b><span>по причине (у/б/з)</span></div>
+    <div class="stat${debtors ? ' warn' : ''}"><b>${debtors}</b><span>с долгами</span></div>
+  `;
+
+  const byStudent = state.students.map(s => {
+    const row = att[s.id] || {};
+    let n = 0;
+    for (let d = 1; d <= total; d++) if (row[d] === 'н') n++;
+    return {s, n};
+  }).sort((a,b) => b.n - a.n).slice(0, 10);
+
+  const maxN = Math.max(1, ...byStudent.map(x => x.n));
+  const host1 = $('#chartByStudent');
+  if (!byStudent.length || byStudent[0].n === 0){
+    host1.innerHTML = '<p class="sub" style="margin:0">Пока никто не пропускал — чисто.</p>';
+  } else {
+    host1.innerHTML = byStudent.map(({s, n}) => `
+      <div class="bar-row ${n === 0 ? 'zero' : ''}">
+        <span class="lbl">${shortName(s.full)}</span>
+        <span class="track"><span class="fill" style="width:${Math.round(n/maxN*100)}%"></span></span>
+        <span class="val">${n}</span>
+      </div>
+    `).join('');
+  }
+
+  const byDow = [0,0,0,0,0,0,0];
+  state.students.forEach(s => {
+    const row = att[s.id] || {};
+    for (let d = 1; d <= total; d++){
+      if (row[d] !== 'н') continue;
+      const w = dowMon(y, m, d);
+      byDow[w]++;
+    }
+  });
+  const maxDow = Math.max(1, ...byDow);
+  $('#chartByDay').innerHTML = byDow.map((n, i) => `
+    <div class="day-bar">
+      <span class="v">${n || ''}</span>
+      <span class="col ${n === 0 ? 'zero' : ''}" style="height:${Math.max(2, Math.round(n/maxDow*100))}%"></span>
+      <span class="lbl">${DOW_SHORT[i]}</span>
+    </div>
+  `).join('');
+
+  const marks = [
+    {m:'п', ct: presentTotal, cls:'p'},
+    {m:'н', ct: missedTotal,  cls:'n'},
+    {m:'у', ct: validTotal,   cls:'u'},
+    {m:'б', ct: sickTotal,    cls:'b'},
+    {m:'з', ct: stmtTotal,    cls:'z'}
+  ];
+  $('#chartMarks').innerHTML = marks.map(x => `
+    <div class="mark-chip">
+      <span class="m ${x.cls}">${x.m}</span>
+      <span class="ct">${x.ct}</span>
+    </div>
+  `).join('');
+}
+
+function renderPtable(){
+  const host = $('#ptbody');
+  host.innerHTML = '';
+  $('#studentCount').textContent = state.students.length;
+  state.students.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td><input value="${s.full}" data-sid="${s.id}" data-field="full"></td>
+      <td>
+        <select data-sid="${s.id}" data-field="sub">
+          <option value="1" ${s.sub===1?'selected':''}>1</option>
+          <option value="2" ${s.sub===2?'selected':''}>2</option>
+        </select>
+      </td>
+      <td><button class="row-btn" data-del="${s.id}" title="Удалить">×</button></td>`;
+    host.appendChild(tr);
+  });
+
+  host.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('change', () => {
+      const s = byId(+el.dataset.sid);
+      if (!s) return;
+      if (el.dataset.field === 'full') s.full = el.value.trim() || s.full;
+      else s.sub = +el.value;
+      renderAll();
+    });
+  });
+
+  host.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = +btn.dataset.del;
+      state.students = state.students.filter(s => s.id !== id);
+      Object.values(state.duties).forEach(month => {
+        Object.values(month).forEach(d => {
+          d.pair = d.pair.map(p => p === id ? null : p);
+          d.skips = d.skips.filter(x => x !== id);
+        });
+      });
+      renderAll();
+    });
+  });
+}
+
+function renderHolidays(){
+  const host = $('#holidayList');
+  if (!state.holidays.length){
+    host.innerHTML = '<p class="sub" style="margin:0">Пока ни одного праздника не отмечено.</p>';
+    return;
+  }
+  const sorted = state.holidays.slice().sort((a,b) => a.date.localeCompare(b.date));
+  host.innerHTML = sorted.map(h => {
+    const [y,mo,d] = h.date.split('-').map(Number);
+    const dt = d + ' ' + MONTHS_GEN[mo-1] + ' ' + y;
+    return `
+      <div class="holiday-row">
+        <span class="dt">${dt}</span>
+        <span class="nm">${h.name || ''}</span>
+        <button class="rm" data-date="${h.date}" title="Удалить">×</button>
+      </div>`;
+  }).join('');
+
+  host.querySelectorAll('.rm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.holidays = state.holidays.filter(h => h.date !== btn.dataset.date);
+      renderAll();
+    });
+  });
+}
+
+$('#holidayAdd').addEventListener('click', () => {
+  const date = $('#holidayDate').value;
+  const name = $('#holidayName').value.trim();
+  if (!date){ toast('Выберите дату'); return; }
+  if (state.holidays.find(h => h.date === date)){ toast('Эта дата уже отмечена'); return; }
+  state.holidays.push({date, name});
+  $('#holidayDate').value = '';
+  $('#holidayName').value = '';
+  renderAll();
+  toast('Праздник добавлен');
+});
+
+function autoAssign(){
+  const {y,m} = parseKey(state.currentMonth);
+  const total = daysIn(y,m);
+  const month = {};
+  const counts = {}, lastDay = {};
+  const ids = state.students.map(s => s.id);
+  ids.forEach(id => { counts[id] = 0; lastDay[id] = 0; });
+
+  const debtors = ids.filter(id => (state.debts[id] || 0) > 0);
+  const rest    = ids.filter(id => (state.debts[id] || 0) === 0);
+  shuffle(debtors); shuffle(rest);
+  const queue = state.rules.priorityDebtors ? [...debtors, ...rest] : shuffle([...ids]);
+
+  let qi = 0, alt = 0;
+  const interval = Math.max(1, state.rules.interval);
+
+  for (let d = 1; d <= total; d++){
+    const w = dowMon(y,m,d);
+    if (w >= 5) continue;
+    if (isHoliday(state.currentMonth, d)) continue;
+
+    const pair = [];
+    let tries = 0;
+    while (pair.length < 2 && tries < queue.length * 3){
+      tries++;
+      const id = queue[qi % queue.length]; qi++;
+      if (pair.includes(id)) continue;
+      const last = lastDay[id] || 0;
+      if (last && (d - last) < interval) continue;
+      if (counts[id] >= state.rules.max) continue;
+      if (state.rules.splitSubs && pair.length === 1){
+        const first = byId(pair[0]), cand = byId(id);
+        if (first && cand && first.sub === cand.sub) continue;
+      }
+      pair.push(id);
+    }
+    while (pair.length < 2){
+      const fb = ids.find(id => !pair.includes(id) && counts[id] < state.rules.max);
+      if (fb === undefined){
+        const any = ids.find(id => !pair.includes(id));
+        if (any === undefined) break;
+        pair.push(any);
+      } else pair.push(fb);
+    }
+    pair.forEach(id => { counts[id]++; lastDay[id] = d; });
+
+    let L;
+    if (state.rules.alternate) L = LOCS[alt++ % LOCS.length];
+    else L = LOCS[Math.floor(rnd(LOCS.length))];
+    month[d] = {loc: L.loc, type: L.type, pair, skips: []};
+  }
+
+  state.duties[state.currentMonth] = month;
+
+  const cal = $('#cal');
+  cal.classList.remove('reassign');
+  void cal.offsetWidth;
+  cal.classList.add('reassign');
+
+  toast('Расставлено');
+}
+
+function renderAll(){
+  renderRoster();
+  if (state.currentTab === 'duties'){ renderCalendar(); renderDayPanel(); }
+  if (state.currentTab === 'journal') renderJournal();
+  if (state.currentTab === 'analytics') renderAnalytics();
+  if (state.currentTab === 'import'){
+    const cur = $$('.subtab[aria-selected="true"]')[0]?.dataset.sub || 'list';
+    if (cur === 'list') renderPtable();
+    if (cur === 'holidays') renderHolidays();
+  }
+  saveSoon();
+}
+
+function setTab(name){
+  if (!TAB_ORDER.includes(name)) return;
+  state.currentTab = name;
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.pane === name)));
+  $$('.mobbar button').forEach(b => b.classList.toggle('on', b.dataset.pane === name));
+  $$('.pane').forEach(p => p.hidden = p.id !== 'pane-' + name);
+  renderAll();
+}
+$$('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.pane)));
+$$('.mobbar button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.pane)));
+
+$$('.subtab').forEach(t => {
+  t.addEventListener('click', () => {
+    $$('.subtab').forEach(x => x.setAttribute('aria-selected', String(x === t)));
+    $$('.subpane').forEach(p => p.hidden = p.id !== 'sub-' + t.dataset.sub);
+    renderAll();
+  });
+});
+
+(function(){
+  const main = $('#main');
+  let sx = 0, sy = 0, ok = false, t0 = 0;
+
+  main.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) { ok = false; return; }
+    const t = e.touches[0];
+    sx = t.clientX; sy = t.clientY; t0 = Date.now();
+    const jw = e.target.closest('.jwrap');
+    ok = !(jw && jw.scrollWidth > jw.clientWidth + 2);
+  }, {passive:true});
+
+  main.addEventListener('touchend', e => {
+    if (!ok) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - sx;
+    const dy = t.clientY - sy;
+    const dt = Date.now() - t0;
+    if (dt > 800) return;
+    if (Math.abs(dx) < 70) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.3) return;
+
+    const cur = TAB_ORDER.indexOf(state.currentTab);
+    if (cur === -1) return;
+    const next = dx < 0 ? cur + 1 : cur - 1;
+    if (next < 0 || next >= TAB_ORDER.length) return;
+    setTab(TAB_ORDER[next]);
+  }, {passive:true});
+})();
+
+function shiftMonth(delta){
+  const {y,m} = parseKey(state.currentMonth);
+  let nm = m + delta, ny = y;
+  if (nm < 1){ nm = 12; ny--; }
+  if (nm > 12){ nm = 1; ny++; }
+  state.currentMonth = mkKey(ny, nm);
+  state.selectedDay = (ny===TODAY.y && nm===TODAY.m) ? TODAY.d : 1;
+  if (!state.duties[state.currentMonth]) autoAssign();
+  renderAll();
+}
+$('#prevMonth').addEventListener('click', () => shiftMonth(-1));
+$('#nextMonth').addEventListener('click', () => shiftMonth(1));
+$('#prevMonthJ').addEventListener('click', () => shiftMonth(-1));
+$('#nextMonthJ').addEventListener('click', () => shiftMonth(1));
+$('#prevMonthA').addEventListener('click', () => shiftMonth(-1));
+$('#nextMonthA').addEventListener('click', () => shiftMonth(1));
+
+$('#autoAssign').addEventListener('click', () => {
+  if (confirm('Расставить дежурства заново на весь месяц?')) autoAssign();
+});
+$('#topImportBtn').addEventListener('click', () => setTab('import'));
+
+$('#search').addEventListener('input', e => {
+  state.filter = e.target.value.trim();
+  renderRoster();
+});
+
+$$('[data-rule]').forEach(el => {
+  const key = el.dataset.rule;
+  if (el.tagName === 'INPUT'){
+    el.addEventListener('change', () => {
+      const v = parseInt(el.value, 10);
+      if (!isNaN(v) && v > 0){ state.rules[key] = v; el.value = v; }
+      renderAll();
+    });
+  } else if (el.classList.contains('sw')){
+    el.addEventListener('click', () => {
+      const now = el.getAttribute('aria-pressed') === 'true';
+      el.setAttribute('aria-pressed', String(!now));
+      state.rules[key] = !now;
+      renderAll();
+    });
+  }
+});
+
+(function(){
+  const bar = $('#mobbar');
+  let lastY = 0;
+  let ticking = false;
+  const THRESHOLD = 40;
+
+  function onScroll(){
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const delta = y - lastY;
+    if (Math.abs(delta) > THRESHOLD){
+      if (delta > 0 && y > 60) bar.classList.add('minimized');
+      else bar.classList.remove('minimized');
+      lastY = y;
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
+  }, {passive:true});
+})();
+
+$('#resetAll').addEventListener('click', () => {
+  if (!confirm('Сбросить все данные? Студенты, дежурства, отметки будут удалены.')) return;
+  localStorage.removeItem(LS_KEY);
+  state = defaultState();
+  autoAssign();
+  renderAll();
+  toast('Всё сброшено');
+});
+
+$('#clearOld').addEventListener('click', () => {
+  const cur = state.currentMonth;
+  let n = 0;
+  [state.duties, state.attendance, state.comments].forEach(obj => {
+    Object.keys(obj).forEach(k => {
+      if (k !== cur){ delete obj[k]; n++; }
+    });
+  });
+  if (!n){ toast('Нечего чистить — только текущий месяц'); return; }
+  renderAll();
+  toast('Очищено: ' + n + ' записей');
+});
+
+/* ═════════ ЭКСПОРТ ═════════ */
+function download(content, filename, mime){
+  const blob = (content instanceof Blob) ? content : new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportXlsx(){
+  if (typeof XLSX === 'undefined'){
+    toast('Библиотека Excel не загрузилась — сохраняю как CSV');
+    exportCsv();
+    return;
+  }
+  const monthKey = state.currentMonth;
+  const {y, m} = parseKey(monthKey);
+  const total = daysIn(y, m);
+  const duties = state.duties[monthKey] || {};
+  const att = state.attendance[monthKey] || {};
+  const cmt = state.comments[monthKey] || {};
+
+  const wb = XLSX.utils.book_new();
+
+  const dRows = [['Дата', 'День', 'Место', 'Дежурный 1', 'Дежурный 2', 'Примечание']];
+  for (let d = 1; d <= total; d++){
+    const w = dowMon(y, m, d);
+    const hol = isHoliday(monthKey, d);
+    if (hol){
+      dRows.push([d, DOW_SHORT[w], '', '', '', hol.name || 'праздник']);
+      continue;
+    }
+    if (w >= 5) continue;
+    const duty = duties[d];
+    if (!duty) continue;
+    const n1 = duty.pair[0] ? (byId(duty.pair[0])?.full || '') : '';
+    const n2 = duty.pair[1] ? (byId(duty.pair[1])?.full || '') : '';
+    const skipped = (duty.pair || [])
+      .filter(sid => sid && isSkipped(monthKey, d, sid))
+      .map(sid => byId(sid)?.full)
+      .filter(Boolean).join(', ');
+    dRows.push([d, DOW_SHORT[w], duty.loc, n1, n2, skipped ? 'скип: ' + skipped : '']);
+  }
+  const ws1 = XLSX.utils.aoa_to_sheet(dRows);
+  ws1['!cols'] = [{wch:6},{wch:5},{wch:8},{wch:26},{wch:26},{wch:22}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Дежурства');
+
+  const header = ['№', 'Студент'];
+  for (let d = 1; d <= total; d++) header.push(String(d));
+  header.push('Пропуски', 'Комментарии');
+  const jRows = [header];
+  state.students.forEach((s, i) => {
+    const row = att[s.id] || {};
+    const cRow = cmt[s.id] || {};
+    const cells = [i + 1, s.full];
+    let missed = 0;
+    const notes = [];
+    for (let d = 1; d <= total; d++){
+      const v = row[d] || '';
+      if (v === 'н') missed++;
+      cells.push(v);
+      if (cRow[d]) notes.push(d + ': ' + cRow[d]);
+    }
+    cells.push(missed, notes.join('; '));
+    jRows.push(cells);
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet(jRows);
+  ws2['!cols'] = [{wch:4}, {wch:28}, ...Array.from({length: total}, () => ({wch:3})), {wch:10}, {wch:40}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Журнал');
+
+  const sRows = [['№', 'Студент', 'Подгруппа', 'Дежурств сделано', 'Минимум', 'Долг', 'Пропусков']];
+  state.students.forEach((s, i) => {
+    const done = dutyCount(monthKey, s.id);
+    const debt = state.debts[s.id] || 0;
+    const row = att[s.id] || {};
+    let missed = 0;
+    for (let d = 1; d <= total; d++) if (row[d] === 'н') missed++;
+    sRows.push([i + 1, s.full, s.sub, done, state.rules.min, debt, missed]);
+  });
+  const ws3 = XLSX.utils.aoa_to_sheet(sRows);
+  ws3['!cols'] = [{wch:4},{wch:28},{wch:10},{wch:18},{wch:10},{wch:8},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Сводка');
+
+  const fname = `MO-34_${MONTHS[m-1]}_${y}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  toast('Excel сохранён: ' + fname);
+}
+
+function exportCsv(){
+  const monthKey = state.currentMonth;
+  const {y, m} = parseKey(monthKey);
+  const total = daysIn(y, m);
+  const att = state.attendance[monthKey] || {};
+
+  const header = ['№', 'Студент'];
+  for (let d = 1; d <= total; d++) header.push(String(d));
+  header.push('Пропуски');
+
+  const rows = [header];
+  state.students.forEach((s, i) => {
+    const row = att[s.id] || {};
+    const cells = [i + 1, s.full];
+    let missed = 0;
+    for (let d = 1; d <= total; d++){
+      const v = row[d] || '';
+      if (v === 'н') missed++;
+      cells.push(v);
+    }
+    cells.push(missed);
+    rows.push(cells);
+  });
+
+  const csv = '\uFEFF' + rows.map(r =>
+    r.map(c => {
+      const s = String(c ?? '');
+      return /[",;\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(';')
+  ).join('\r\n');
+
+  const fname = `MO-34_журнал_${MONTHS[m-1]}_${y}.csv`;
+  download(csv, fname, 'text/csv;charset=utf-8');
+  toast('CSV сохранён: ' + fname);
+}
+
+function exportIcs(){
+  const monthKey = state.currentMonth;
+  const {y, m} = parseKey(monthKey);
+  const total = daysIn(y, m);
+  const duties = state.duties[monthKey] || {};
+
+  let ics = '';
+  ics += 'BEGIN:VCALENDAR\r\n';
+  ics += 'VERSION:2.0\r\n';
+  ics += 'PRODID:-//MO-34//Journal//RU\r\n';
+  ics += 'CALSCALE:GREGORIAN\r\n';
+  ics += 'METHOD:PUBLISH\r\n';
+  ics += 'X-WR-CALNAME:MO-34 дежурства ' + MONTHS[m-1] + '\r\n';
+
+  for (let d = 1; d <= total; d++){
+    const w = dowMon(y, m, d);
+    if (w >= 5) continue;
+    if (isHoliday(monthKey, d)) continue;
+    const duty = duties[d];
+    if (!duty) continue;
+
+    const names = (duty.pair || []).filter(Boolean).map(sid => byId(sid)?.full).filter(Boolean);
+    const dateStr = `${y}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+    const summary = `Дежурство ${duty.loc} — ${names.join(' и ')}`;
+    const desc = `${duty.loc}. Дежурные: ${names.join(', ')}`;
+
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:duty-${monthKey}-${d}@mo34\r\n`;
+    ics += `DTSTAMP:${new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)}Z\r\n`;
+    ics += `DTSTART;VALUE=DATE:${dateStr}\r\n`;
+    ics += `SUMMARY:${summary}\r\n`;
+    ics += `DESCRIPTION:${desc}\r\n`;
+    ics += 'END:VEVENT\r\n';
+  }
+  ics += 'END:VCALENDAR\r\n';
+
+  const fname = `MO-34_дежурства_${MONTHS[m-1]}_${y}.ics`;
+  download(ics, fname, 'text/calendar;charset=utf-8');
+  toast('Календарь сохранён: ' + fname);
+}
+
+const exportMenu = $('#exportMenu');
+$('#exportBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  exportMenu.hidden = !exportMenu.hidden;
+});
+document.addEventListener('click', e => {
+  if (!exportMenu.hidden && !e.target.closest('.export-wrap')) exportMenu.hidden = true;
+});
+exportMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const act = btn.dataset.act;
+    exportMenu.hidden = true;
+    if (act === 'xlsx') exportXlsx();
+    else if (act === 'csv') exportCsv();
+    else if (act === 'ics') exportIcs();
+    else if (act === 'print') window.print();
+  });
+});
+
+/* ═════════ ИМПОРТ ═════════ */
+function parseNamesFromText(text){
+  const lines = String(text).split(/\r?\n/);
+  const names = [];
+  const seen = new Set();
+  for (let line of lines){
+    line = line.trim();
+    if (!line) continue;
+    line = line.replace(/^[\d]+[\.\)\-\s]+/, '').trim();
+    line = line.replace(/[\d\.\,\;\:\-\u2013\u2014]+$/, '').trim();
+    if (line.length < 4 || line.length > 70) continue;
+    const words = line.split(/\s+/);
+    if (words.length < 2) continue;
+    if (!/^[А-ЯЁ]/.test(words[0])) continue;
+    if (!/^[А-ЯЁ]/.test(words[1])) continue;
+    if (/^(группа|список|студент|преподавател|№|фио)/i.test(words[0])) continue;
+    const key = line.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    names.push(line);
+  }
+  return names;
+}
+
+async function handleFile(file){
+  const name = file.name.toLowerCase();
+  try{
+    let names = [];
+    if (name.endsWith('.docx')){
+      if (typeof mammoth === 'undefined'){ toast('Библиотека .docx не загрузилась'); return; }
+      const buf = await file.arrayBuffer();
+      const res = await mammoth.extractRawText({arrayBuffer: buf});
+      names = parseNamesFromText(res.value);
+    }
+    else if (name.endsWith('.xlsx') || name.endsWith('.xls')){
+      if (typeof XLSX === 'undefined'){ toast('Библиотека .xlsx не загрузилась'); return; }
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, {type: 'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header: 1, raw: false});
+      const text = rows.map(r => (r || []).map(c => c == null ? '' : String(c)).join('\n')).join('\n');
+      names = parseNamesFromText(text);
+    }
+    else if (name.endsWith('.csv') || name.endsWith('.txt')){
+      const text = await file.text();
+      names = parseNamesFromText(text);
+    }
+    else { toast('Формат не поддержан: ' + name); return; }
+
+    if (!names.length){ toast('Имён не нашлось — проверьте файл'); return; }
+    if (!confirm(`Найдено ${names.length} имён. Заменить текущий список группы?`)) return;
+
+    state.students = names.map((full, i) => ({id: i + 1, full, sub: (i % 2) + 1}));
+    state.debts = {}; state.attendance = {}; state.duties = {}; state.comments = {};
+    autoAssign();
+    renderAll();
+    toast('Загружено: ' + names.length + ' студентов');
+  }catch(err){
+    console.error(err);
+    toast('Ошибка при чтении файла');
+  }
+}
+
+$('#pickFile').addEventListener('click', () => $('#fileInput').click());
+$('#fileInput').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  await handleFile(f);
+  e.target.value = '';
+});
+(function(){
+  const drop = $('#drop');
+  if (!drop) return;
+  ['dragenter','dragover'].forEach(ev => {
+    drop.addEventListener(ev, e => {
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.add('over');
+    });
+  });
+  ['dragleave','drop'].forEach(ev => {
+    drop.addEventListener(ev, e => {
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.remove('over');
+    });
+  });
+  drop.addEventListener('drop', async e => {
+    const f = e.dataTransfer.files[0];
+    if (f) await handleFile(f);
+  });
+})();
+
+(function init(){
+  const restored = loadState();
+  if (!state.duties[state.currentMonth]) autoAssign();
+  renderAll();
+  if (restored) toast('Состояние восстановлено из памяти');
+})();
+</script>
+</body>
+</html>
